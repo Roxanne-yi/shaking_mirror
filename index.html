@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Player</title>
+  </head>
+    <body>
+      <audio
+        id="audio" hidden
+        controls>
+        <source id="audioSource" src="" type="audio/mpeg">
+    </audio>
+      <video controls class="video" id="video" preload="metadata">
+        <source id="videoSource" src="" type="video/mp4"/>
+      </video>
+   
+    <script>
+       function getMyUnitId(){
+
+        const addrElem = document.location.href.split("/");
+        const unitId = addrElem[addrElem.length-1];
+        var audio = document.getElementById('audio');
+        var source = document.getElementById('audioSource');
+        var vsource = document.getElementById('videoSource');
+        if (unitId === '1'){
+          source.setAttribute('src', 'vo1.mp3');
+        }else if (unitId === '2'){
+          source.setAttribute('src', 'vo2.mp3');
+        }else if (unitId === '3'){
+          source.setAttribute('src', 'vo3.mp3');
+        }else if (unitId === '4'){
+          source.setAttribute('src', 'vo4.mp3');
+        }else if (unitId === '5'){
+          source.setAttribute('src', 'vo5.mp3');
+        }else if (unitId === '6'){
+          source.setAttribute('src', 'vo6.mp3');
+        }
+        vsource.setAttribute('src',getVideoNameForUnit(unitId));
+
+        return unitId;
+      }
+
+      function formatTime(timeInSeconds) {
+        const result = new Date(timeInSeconds * 1000).toISOString().substr(11, 8);
+
+        return {
+          minutes: result.substr(3, 2),
+          seconds: result.substr(6, 2),
+        };
+      };
+      function updateTimeElapsed() {
+
+        var video = document.getElementById('video');
+
+        // const time = formatTime(Math.round(video.currentTime));
+        const time = video.currentTime;
+        // console.log(time);
+        
+        if (!video){
+          return;
+        }
+        switch (currentSpeed){
+          case 'low':
+            if (time >= 15.0){
+              video.pause();
+              video.currentTime = 10.0;
+              video.play();
+            }
+            break;
+          case ' mid':
+            if (time >= 10.0){
+              video.pause();
+              video.currentTime = 5.0;
+              video.play();
+            }
+            break;
+          case 'high':
+            if (time >= 5.0){
+              video.pause();
+              video.currentTime = 0.0;
+              video.play();
+            }
+            break;
+          case 'calm':
+            if (time >= 27.0){
+              video.pause();
+            }
+            break;
+          case 'all_calm':
+            video.pause();
+            video.currentTime = 34.0;
+            video.play();
+          break;
+        }
+      }
+
+      function getVideoNameForUnit(unitId){
+        switch(unitId){
+          case '1':
+            return "UED.mp4";
+            breaks;
+          case '2':
+            return "PD.mp4";
+            breaks;
+          case '3':
+          return "MET.mp4";
+             breaks;
+          case '4':
+          return "IXD.mp4";
+            breaks;
+          case '5':
+          return "IM.mp4";
+            breaks;
+          case '6':
+          return "IDBM.mp4";
+            breaks;
+        }
+      }
+
+
+
+
+
+
+
+
+      var socket = io();
+      var currentSpeed = 'high';
+
+      socket.emit('unitmapping', getMyUnitId());
+
+      const video = document.getElementById('video');
+      const audio = document.getElementById('audio');
+
+      // html5 video events
+      // https://html.spec.whatwg.org/multipage/media.html#event-media-ended
+      // html5 video control tutorial
+      // https://freshman.tech/custom-html5-video/
+      video.onended = function(e) {
+        console.log('video ended');
+      };
+      video.addEventListener('timeupdate', updateTimeElapsed);
+      // video.addEventListener('loadedmetadata',function(e){
+      //   console.log('here');
+      //   if (this.requestFullscreen)
+      //     this.requestFullscreen();
+      //   else if (this.msRequestFullscreen)
+      //     this.msRequestFullscreen();
+      //   else if (this.mozRequestFullScreen) // Note the capital "S" in Screen
+      //     this.mozRequestFullScreen();
+      //   else if (this.webkitRequestFullscreen)
+      //     this.webkitRequestFullscreen();
+      //   // video.play();
+      //   video.focus();
+      // }, false)
+
+      audio.onended = function(e) {
+        console.log('audio ended');
+        audio.pause();
+        audio.currentTime = 0;
+        audio.play();
+      };
+      // const videoWorks = !!document.createElement('video').canPlayType;
+
+      socket.on('seek', (time)=>{
+        video.play();
+	      video.pause();
+        // console.log(video.duration);
+        video.currentTime = parseFloat(time);
+        video.play();
+      });
+
+      socket.on('pause', ()=>{
+	      video.pause();
+      });
+
+      socket.on('play', ()=>{
+        console.log("video on play");
+	      video.play();
+        audio.play();
+        video.requestFullscreen();
+      });
+
+      socket.on('rate', (speed)=>{
+        video.playbackRate =  parseFloat(speed);
+      });
+
+      socket.on('speed_update', (speed)=>{
+        console.log("video on speed_update: ", speed);
+        currentSpeed = speed;
+        if(speed === 'all_calm'){
+          video.play();
+        }
+      });
+
+      socket.on('audio_control', (status)=>{
+        console.log("audio control: ", status);
+        if (status === 'start'){
+          audio.play();
+        }else if (status === 'stop'){
+          audio.pause();
+          audio.currentTime = 0;
+        }else if (status === 'reset'){
+          audio.pause();
+          audio.currentTime = 0;
+          audio.play();
+        }
+      });
+
+
+    </script>
+  </body>
+</html>
