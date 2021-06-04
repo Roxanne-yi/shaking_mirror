@@ -60,22 +60,29 @@
           return;
         }
         switch (currentSpeed){
-          case 'low':
+          case 'super_low':
             if (time >= 15.0){
               video.pause();
-              video.currentTime = 10.0;
+              video.currentTime = 12.0;
+              video.play();
+            }
+            break;
+          case 'low':
+            if (time >= 12.0){
+              video.pause();
+              video.currentTime = 8.0;
               video.play();
             }
             break;
           case ' mid':
-            if (time >= 10.0){
+            if (time >= 8.0){
               video.pause();
-              video.currentTime = 5.0;
+              video.currentTime = 4.0;
               video.play();
             }
             break;
           case 'high':
-            if (time >= 5.0){
+            if (time >= 4.0){
               video.pause();
               video.currentTime = 0.0;
               video.play();
@@ -140,19 +147,6 @@
         console.log('video ended');
       };
       video.addEventListener('timeupdate', updateTimeElapsed);
-      // video.addEventListener('loadedmetadata',function(e){
-      //   console.log('here');
-      //   if (this.requestFullscreen)
-      //     this.requestFullscreen();
-      //   else if (this.msRequestFullscreen)
-      //     this.msRequestFullscreen();
-      //   else if (this.mozRequestFullScreen) // Note the capital "S" in Screen
-      //     this.mozRequestFullScreen();
-      //   else if (this.webkitRequestFullscreen)
-      //     this.webkitRequestFullscreen();
-      //   // video.play();
-      //   video.focus();
-      // }, false)
 
       audio.onended = function(e) {
         console.log('audio ended');
@@ -163,9 +157,11 @@
       // const videoWorks = !!document.createElement('video').canPlayType;
 
       socket.on('seek', (time)=>{
-        video.play();
-	      video.pause();
+        console.log("socket on seek");
+        // video.play();
+	      // video.pause();
         // console.log(video.duration);
+        console.log(parseFloat(time));
         video.currentTime = parseFloat(time);
         video.play();
       });
