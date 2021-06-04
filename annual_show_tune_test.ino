@@ -1,4 +1,5 @@
 /* Example sketch to control a stepper motor with TB6600 stepper motor driver and Arduino without a library: number of revolutions, speed and direction. More info: https://www.makerguides.com */
+#include <ArduinoJson.h>
 
 #define dirPin D2
 #define stepPin D3
@@ -80,57 +81,76 @@ void loop() {
   if(peopleHere == true){
     if (speedcount > 0){
       speedcount -= 1;
-    }
-    else{
-    speedcount = 5;
-    stepNum -= 5;
-    if (stepNum <0){
-      stepNum = 0;
+    }else{
+      speedcount = 5;
+      stepNum -= 5;
+      if (stepNum <0){
+        stepNum = 0;
       }
-    delaytime+=30;
-    if(delaytime>100)
-    {
-      delaytime = 100;
-      lockStatus = true;
-      Serial.println("calm down");
+      if (delaytime > 70){
+        if (lockStatus == false){
+          DynamicJsonDocument doc(128);
+          doc["status"] = "calm";
+          String output;
+          serializeJson(doc, output);
+          Serial.println(output);
+          lockStatus = true;
+        } 
+        
+      }else{
+        delaytime+=30;
+        DynamicJsonDocument doc(128);
+        doc["status"] = "delay";
+        doc["value"] = delaytime;
+        String output;
+        serializeJson(doc, output);
+        Serial.println(output);
       }
+
     }
-    Serial.print("delaytime:");
-    Serial.println(delaytime);
+    
   }
   else if (peopleHere == false){
     if (lockcount > 0 && lockStatus == true){
         lockcount -= 1;
         delay(600);
-      }else if(lockcount <= 0 && lockStatus == true){
+    }else if(lockcount <= 0 && lockStatus == true){
         lockStatus = false;
         delaytime = 100;
         stepNum = 10;
         speedcount2 = 5;
-        Serial.println("reset");
+//        Serial.println("{\"status\":\"reset\"}");
+        DynamicJsonDocument doc(128);
+        doc["status"] = "reset";
+        String output;
+        serializeJson(doc, output);
+        Serial.println(output);
         lockcount = 100;
-      }
+    }
     if (speedcount2 > 0){
       speedcount2 -= 1;
-    }
-    else{
-    speedcount2 = 5;
-    stepNum += 5;
-    if (stepNum >50){
-      stepNum = 50;
+    }else{
+      speedcount2 = 5;
+      stepNum += 5;
+      if (stepNum >50){
+        stepNum = 50;
       }
-    delaytime -=30;
-    if(delaytime<10)
-    {
-      delaytime = 10;
+      if (delaytime < 40){
+        
+      }else if (delaytime >= 40 && lockStatus == false){
+        delaytime -=30;
+        DynamicJsonDocument doc(128);
+        doc["status"] = "delay";
+        doc["value"] = delaytime;
+        String output;
+        serializeJson(doc, output);
+        Serial.println(output);
       }
     }
-    Serial.print("delaytime:");
-    Serial.println(delaytime);
-    }
+  }
 
   if(!lockStatus){
-  swingOnce(delaytime);
+    swingOnce(delaytime);
   }
 }
 
