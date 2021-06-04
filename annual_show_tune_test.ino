@@ -12,7 +12,8 @@ int delaytime = 10;
 float t = 30.0;
 int stepNum = 40;
 int lockcount = 100;
-
+int speedcount = 5;
+int speedcount2 = 5;
 double distance(int trig, int echo)
 {
   unsigned long MEASURE_TIMEOUT = 23000UL;
@@ -60,7 +61,7 @@ void takeDistance(){
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   pinMode(stepPin, OUTPUT);
   pinMode(dirPin, OUTPUT);
   pinMode(Trig, OUTPUT);
@@ -77,37 +78,53 @@ void loop() {
   takeDistance();
   delay(10);
   if(peopleHere == true){
-    stepNum -= 1;
+    if (speedcount > 0){
+      speedcount -= 1;
+    }
+    else{
+    speedcount = 5;
+    stepNum -= 5;
     if (stepNum <0){
       stepNum = 0;
       }
-    delaytime+=5;
+    delaytime+=30;
     if(delaytime>100)
     {
       delaytime = 100;
       lockStatus = true;
       Serial.println("calm down");
       }
+    }
     Serial.print("delaytime:");
     Serial.println(delaytime);
   }
   else if (peopleHere == false){
     if (lockcount > 0 && lockStatus == true){
         lockcount -= 1;
-      }else{
+        delay(600);
+      }else if(lockcount <= 0 && lockStatus == true){
         lockStatus = false;
+        delaytime = 100;
+        stepNum = 10;
+        speedcount2 = 5;
         Serial.println("reset");
         lockcount = 100;
       }
-    stepNum += 1;
+    if (speedcount2 > 0){
+      speedcount2 -= 1;
+    }
+    else{
+    speedcount2 = 5;
+    stepNum += 5;
     if (stepNum >50){
       stepNum = 50;
       }
-    delaytime -=5;
+    delaytime -=30;
     if(delaytime<10)
     {
       delaytime = 10;
       }
+    }
     Serial.print("delaytime:");
     Serial.println(delaytime);
     }
