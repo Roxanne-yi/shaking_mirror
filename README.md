@@ -2,6 +2,14 @@
 - Arduino (esp8266)board link: https://arduino.esp8266.com/stable/package_esp8266com_index.json
 - BGM audio link: https://drive.google.com/u/0/uc?id=1uvmX4Dl_fuj4DUCkmtzGfK-ybtRc0Tsk&export=download
 
+## installing chrome driver
+sudo apt-get install chromium-chromedriver
+
+## installing nodejs
+- curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+- nvm install node
+- nvm install --lts
+
 ## nodejs autostart sequence
 - Install pm2 for node (npm install -g pm2)
 - Type “pm2 startup” into the command line
@@ -9,8 +17,3 @@
 - Change directories to where your app exists.
 - Type “pm2 start filename.js”
 - Type “pm2 save”
-
-## installing nodejs
-- curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-- nvm install node
-- nvm install --lts
