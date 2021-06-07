@@ -13,6 +13,7 @@ const io = require("socket.io")(server, {
   }
 });
 let websiteSocket;
+let websiteReady = false;
 
 //==============serial port commm initialisation========================
 const SerialPort = require('serialport');
@@ -25,6 +26,9 @@ port.on("open", () => {
   console.log('serial port open');
 });
 parser.on('data', data =>{
+  if (!websiteReady){
+    return;
+  }
   console.log(data);
   const obj = JSON.parse(data);
   console.log(obj.status);
@@ -105,6 +109,10 @@ io.on('connection', (socket) => {
     websiteSocket.emit('play', 'xx');
     console.log('play!');
   }, 3000);
+
+  setTimeout(function(){
+    websiteReady = true;
+  }, 10000);
     
 });
 
