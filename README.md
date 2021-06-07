@@ -9,3 +9,8 @@
 - Change directories to where your app exists.
 - Type “pm2 start filename.js”
 - Type “pm2 save”
+
+## installing nodejs
+- curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+- nvm install node
+- nvm install --lts
