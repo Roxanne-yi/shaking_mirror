@@ -3,10 +3,10 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 
-//==============socketio initialisation========================
+// ==============socketio initialisation========================
 // const { Server } = require("socket.io");
 // const io = new Server(server);
-//below is the old version of initialisation of socketio
+// below is the old version of initialisation of socketio
 const io = require("socket.io")(server, {
   allowRequest: (req, callback) => {
     callback(null, req.headers.origin === undefined); // cross-origin requests will not be allowed
@@ -107,7 +107,6 @@ io.on('connection', (socket) => {
 
   setTimeout(function () {
     websiteSocket.emit('play', 'xx');
-    console.log('play!');
   }, 3000);
 
   setTimeout(function(){
