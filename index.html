@@ -6,9 +6,11 @@
   </head>
     <body>
       <audio
-        id="audio" hidden
-        controls>
+        id="audio" hidden>
         <source id="audioSource" src="" type="audio/mpeg">
+    </audio>
+    <audio id="bgm" hidden>
+      <source id="bgmSource" src="" type="audio/mpeg">
     </audio>
       <video class="video" id="video" preload="metadata">
         <source id="videoSource" src="" type="video/mp4"/>
@@ -20,10 +22,12 @@
         const addrElem = document.location.href.split("/");
         const unitId = addrElem[addrElem.length-1];
         var audio = document.getElementById('audio');
+        var bgmsource = document.getElementById('bgmSource');
         var source = document.getElementById('audioSource');
         var vsource = document.getElementById('videoSource');
         if (unitId === '1'){
           source.setAttribute('src', 'vo1.mp3');
+          bgmsource.setAttribute('src', 'bgm.mp3');
         }else if (unitId === '2'){
           source.setAttribute('src', 'vo2.mp3');
         }else if (unitId === '3'){
@@ -65,6 +69,7 @@
               video.pause();
               video.currentTime = 12.0;
               video.play();
+              audio.volume = 0.1;
             }
             break;
           case 'low':
@@ -72,6 +77,7 @@
               video.pause();
               video.currentTime = 8.0;
               video.play();
+              audio.volume = 0.3;
             }
             break;
           case ' mid':
@@ -79,6 +85,7 @@
               video.pause();
               video.currentTime = 4.0;
               video.play();
+              audio.volume = 0.5;
             }
             break;
           case 'high':
@@ -86,17 +93,20 @@
               video.pause();
               video.currentTime = 0.0;
               video.play();
+              audio.volume = 0.7;
             }
             break;
           case 'calm':
             if (time >= 27.0){
               video.pause();
+              audio.volume = 0.0;
             }
             break;
           case 'all_calm':
             video.pause();
             video.currentTime = 34.0;
             video.play();
+            audio.volume = 0.0;
           break;
         }
       }
@@ -138,6 +148,8 @@
 
       const video = document.getElementById('video');
       const audio = document.getElementById('audio');
+      const bgm = document.getElementById('bgm');
+      bgm.volume = 1.0;
 
       // html5 video events
       // https://html.spec.whatwg.org/multipage/media.html#event-media-ended
@@ -154,6 +166,14 @@
         audio.currentTime = 0;
         audio.play();
       };
+      bgm.onended = function(e) {
+        console.log('bgm ended');
+        bgm.pause();
+        bgm.currentTime = 0;
+        bgm.play();
+      };
+          
+
       // const videoWorks = !!document.createElement('video').canPlayType;
 
       socket.on('seek', (time)=>{
@@ -174,6 +194,7 @@
         console.log("video on play");
 	      video.play();
         audio.play();
+        bgm.play();
         video.requestFullscreen();
       });
 
@@ -193,6 +214,7 @@
         console.log("audio control: ", status);
         if (status === 'start'){
           audio.play();
+          bgm.play();
         }else if (status === 'stop'){
           audio.pause();
           audio.currentTime = 0;
@@ -200,6 +222,7 @@
           audio.pause();
           audio.currentTime = 0;
           audio.play();
+          bgm.play();
         }
       });
 
