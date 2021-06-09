@@ -10,7 +10,7 @@ bool peopleHere = false;
 bool lockStatus = false;
 float dist; 
 int delaytime = 10;
-float t = 30.0;
+float t = 50.0;
 int stepNum = 40;
 int lockcount = 100;
 int speedcount = 5;
@@ -43,15 +43,17 @@ double distance(int trig, int echo)
 //  Serial.print(distance_cm);//串口输出距离换算成cm的结果
 //  Serial.println("cm");
 //  delay(100);
-  if(distance_cm<0.1 || distance_cm>300){
-    return -1.0;
-    }else{
-  return distance_cm;
+  if(distance_cm<0.1 || distance_cm>200){
+  return 100;
     }
+    else{
+      return distance_cm;}
   }
 
 void takeDistance(){
     dist = distance(Trig, Echo);
+//    Serial.print("distance:");
+//    Serial.println(dist);
 
     if(dist < t){
       peopleHere = true;
@@ -160,7 +162,7 @@ void swingOnce(int delayTime){
     turn(false, delayTime);
     turn(false, delayTime);
     turn(true, delayTime);
-}
+} 
 
 void turn(bool dir, int delayTime){
    // HIGH: clockwise, LOW: counterclockwise
