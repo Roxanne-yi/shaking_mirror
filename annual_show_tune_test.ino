@@ -9,12 +9,14 @@
 bool peopleHere = false;
 bool lockStatus = false;
 float dist; 
-int delaytime = 10;
+int delaytime = 100;
 float t = 50.0;
-int stepNum = 40;
+int stepNum = 5;
 int lockcount = 100;
 int speedcount = 5;
 int speedcount2 = 5;
+
+
 double distance(int trig, int echo)
 {
   unsigned long MEASURE_TIMEOUT = 23000UL;
@@ -43,11 +45,11 @@ double distance(int trig, int echo)
 //  Serial.print(distance_cm);//串口输出距离换算成cm的结果
 //  Serial.println("cm");
 //  delay(100);
-  if(distance_cm<0.1 || distance_cm>200){
-  return 100;
+    if(distance_cm<0.1 || distance_cm>200){
+      return 100;
+    }else{
+      return distance_cm;
     }
-    else{
-      return distance_cm;}
   }
 
 void takeDistance(){
@@ -60,7 +62,6 @@ void takeDistance(){
     }else{
       peopleHere = false;
     }
- 
 }
 
 void setup() {
